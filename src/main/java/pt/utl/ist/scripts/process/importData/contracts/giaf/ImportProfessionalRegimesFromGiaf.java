@@ -37,7 +37,7 @@ public class ImportProfessionalRegimesFromGiaf extends ImportFromGiaf {
             while (result.next()) {
                 String giafId = result.getString("emp_regime");
                 String regimeName = result.getString("regime_dsc");
-                MultiLanguageString name = new MultiLanguageString(pt.utl.ist.fenix.tools.util.i18n.Language.pt, regimeName);
+                MultiLanguageString name = new MultiLanguageString(MultiLanguageString.pt, regimeName);
                 Integer weighting = result.getInt("regime_pond");
                 BigDecimal fullTimeEquivalent = result.getBigDecimal("valor_eti");
 

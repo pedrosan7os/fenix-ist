@@ -58,7 +58,7 @@ public class ImportTypesFromGiaf extends ImportFromGiaf {
                 if (StringUtils.isEmpty(nameString)) {
                     nameString = result.getString("tab_cod_dsc");
                 }
-                MultiLanguageString name = new MultiLanguageString(pt.utl.ist.fenix.tools.util.i18n.Language.pt, nameString);
+                MultiLanguageString name = new MultiLanguageString(MultiLanguageString.pt, nameString);
 
                 if (type.equalsIgnoreCase(FUNCTIONS_ACCUMULATION)) {
                     FunctionsAccumulation functionsAccumulation = functionsAccumulationsMap.get(giafId);

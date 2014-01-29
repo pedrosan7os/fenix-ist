@@ -39,7 +39,7 @@ public class ImportProfessionalRelationsFromGiaf extends ImportFromGiaf {
                 if (StringUtils.isEmpty(nameString)) {
                     nameString = result.getString("tab_cod_dsc");
                 }
-                MultiLanguageString name = new MultiLanguageString(pt.utl.ist.fenix.tools.util.i18n.Language.pt, nameString);
+                MultiLanguageString name = new MultiLanguageString(MultiLanguageString.pt, nameString);
                 Boolean fullTimeEquivalent = getBoolean(result.getString("eti"));
 
                 ProfessionalRelation professionalRelation = professionalRelationsMap.get(giafId);

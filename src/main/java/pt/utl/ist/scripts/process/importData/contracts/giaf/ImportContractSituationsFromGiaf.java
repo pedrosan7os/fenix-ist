@@ -51,8 +51,7 @@ public class ImportContractSituationsFromGiaf extends ImportFromGiaf {
             ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
                 String giafId = result.getString("emp_sit");
-                MultiLanguageString description =
-                        new MultiLanguageString(pt.utl.ist.fenix.tools.util.i18n.Language.pt, result.getString("sit_dsc"));
+                MultiLanguageString description = new MultiLanguageString(MultiLanguageString.pt, result.getString("sit_dsc"));
                 String type = result.getString("sit_prc");
                 Boolean endSituation = giafId.equals("290") || giafId.equals("177") ? false : endSituationList.contains(type);
                 Boolean serviceExemption = serviceExemptionList.contains(type);

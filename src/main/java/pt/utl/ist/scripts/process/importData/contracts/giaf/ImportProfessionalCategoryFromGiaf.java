@@ -43,8 +43,7 @@ public class ImportProfessionalCategoryFromGiaf extends ImportFromGiaf {
             ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
                 String giafId = result.getString("emp_cat_func");
-                MultiLanguageString description =
-                        new MultiLanguageString(pt.utl.ist.fenix.tools.util.i18n.Language.pt, result.getString("cat_func_dsc"));
+                MultiLanguageString description = new MultiLanguageString(MultiLanguageString.pt, result.getString("cat_func_dsc"));
                 CategoryType categoryType = null;
                 String agrupamento = (result.getString("agrupamento"));
                 if (agrupamento != null) {
