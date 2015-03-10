@@ -30,7 +30,6 @@ import java.util.Locale;
 import org.fenixedu.academic.bootstrap.FenixBootstrapper.SchoolSetupSection;
 import org.fenixedu.academic.domain.Attends;
 import org.fenixedu.academic.domain.BibliographicReference;
-import org.fenixedu.academic.domain.Branch;
 import org.fenixedu.academic.domain.CompetenceCourse;
 import org.fenixedu.academic.domain.CompetenceCourseType;
 import org.fenixedu.academic.domain.Coordinator;
@@ -40,7 +39,6 @@ import org.fenixedu.academic.domain.CurricularCourse;
 import org.fenixedu.academic.domain.CurricularCourseScope;
 import org.fenixedu.academic.domain.CurricularSemester;
 import org.fenixedu.academic.domain.CurricularYear;
-import org.fenixedu.academic.domain.Curriculum;
 import org.fenixedu.academic.domain.Degree;
 import org.fenixedu.academic.domain.DegreeCurricularPlan;
 import org.fenixedu.academic.domain.DegreeInfo;
@@ -84,7 +82,6 @@ import org.fenixedu.academic.domain.accounting.serviceAgreementTemplates.Adminis
 import org.fenixedu.academic.domain.accounting.serviceAgreementTemplates.DegreeCurricularPlanServiceAgreementTemplate;
 import org.fenixedu.academic.domain.accounting.serviceAgreements.DegreeCurricularPlanServiceAgreement;
 import org.fenixedu.academic.domain.administrativeOffice.AdministrativeOffice;
-import org.fenixedu.academic.domain.branch.BranchType;
 import org.fenixedu.academic.domain.curricularPeriod.CurricularPeriod;
 import org.fenixedu.academic.domain.curriculum.CurricularCourseType;
 import org.fenixedu.academic.domain.curriculum.EnrollmentCondition;
@@ -125,7 +122,6 @@ import org.fenixedu.academic.domain.vigilancy.VigilantGroup;
 import org.fenixedu.academic.dto.GenericPair;
 import org.fenixedu.academic.util.DiaSemana;
 import org.fenixedu.academic.util.HourMinuteSecond;
-import org.fenixedu.academic.util.MarkType;
 import org.fenixedu.academic.util.Money;
 import org.fenixedu.academic.util.PeriodState;
 import org.fenixedu.academic.util.Season;
@@ -1133,28 +1129,16 @@ public class CreateTestData {
         final Space campus = getCampus();
 
         int i = 0;
-        for (final DegreeType degreeType : DegreeType.NOT_EMPTY_VALUES) {
+        for (final DegreeType degreeType : DegreeType.NOT_EMPTY_BOLONHA_VALUES) {
             ++i;
             final GradeScale gradeScale = degreeType.getGradeScale();
             final Degree degree;
             final DegreeCurricularPlan degreeCurricularPlan;
-            if (degreeType.isBolonhaType()) {
-                degree =
-                        new Degree("Agricultura do Conhecimento", "Knowledge Agriculture", "CODE" + i, degreeType, 0d,
-                                gradeScale, null, Bennu.getInstance().getAdministrativeOfficesSet().iterator().next());
-                degreeCurricularPlan = degree.createBolonhaDegreeCurricularPlan("DegreeCurricularPlanName", gradeScale, person);
-                degreeCurricularPlan.setCurricularStage(CurricularStage.PUBLISHED);
-            } else {
-                degree = new Degree("Agricultura do Conhecimento", "Knowledge Agriculture", "CODE" + i, degreeType, gradeScale);
-                degreeCurricularPlan =
-                        degree.createPreBolonhaDegreeCurricularPlan("DegreeCurricularPlanName", DegreeCurricularPlanState.ACTIVE,
-                                new Date(), null, degreeType.getYears(), Integer.valueOf(1),
-                                Double.valueOf(degree.getEctsCredits()), MarkType.TYPE20_OBJ, Integer.valueOf(100), null,
-                                gradeScale);
-                final Branch branch = new Branch("", "", "", degreeCurricularPlan);
-                branch.setBranchType(BranchType.COMNBR);
-                createPreBolonhaCurricularCourses(degreeCurricularPlan, i, executionYear, branch);
-            }
+            degree =
+                    new Degree("Agricultura do Conhecimento", "Knowledge Agriculture", "CODE" + i, degreeType, 0d, gradeScale,
+                            null, Bennu.getInstance().getAdministrativeOfficesSet().iterator().next());
+            degreeCurricularPlan = degree.createBolonhaDegreeCurricularPlan("DegreeCurricularPlanName", gradeScale, person);
+            degreeCurricularPlan.setCurricularStage(CurricularStage.PUBLISHED);
 
             final Department department = new Department();
             department.setCode(degree.getSigla());
@@ -1294,39 +1278,39 @@ public class CreateTestData {
         return calendar;
     }
 
-    private static void createPreBolonhaCurricularCourses(final DegreeCurricularPlan degreeCurricularPlan, int dcpCounter,
-            final ExecutionYear executionYear, final Branch branch) {
-        for (final CurricularSemester curricularSemester : Bennu.getInstance().getCurricularSemestersSet()) {
-            final CurricularYear curricularYear = curricularSemester.getCurricularYear();
-            for (int i = 1; i < 6; i++) {
-                final String x = "" + dcpCounter + i + curricularYear.getYear() + curricularSemester.getSemester();
-                final CurricularCourse curricularCourse =
-                        degreeCurricularPlan.createCurricularCourse("Germinacao do Conhecimento" + x, "C" + x, "D" + x,
-                                Boolean.TRUE, CurricularStage.OLD);
-                curricularCourse.setNameEn("KnowledgeGermination" + x);
-                curricularCourse.setType(CurricularCourseType.NORMAL_COURSE);
-                curricularCourse.setTheoreticalHours(Double.valueOf(3d));
-                curricularCourse.setPraticalHours(Double.valueOf(2d));
-                curricularCourse.setMinimumValueForAcumulatedEnrollments(Integer.valueOf(1));
-                curricularCourse.setMaximumValueForAcumulatedEnrollments(Integer.valueOf(2));
-                curricularCourse.setWeigth(Double.valueOf(6));
-                new CurricularCourseScope(branch, curricularCourse, curricularSemester, executionYear.getBeginDateYearMonthDay()
-                        .toDateMidnight().toCalendar(null), null, null);
-                final Curriculum curriculum = new Curriculum();
-                curriculum.setCurricularCourse(curricularCourse);
-                curriculum.setGeneralObjectives("Objectivos gerais bla bla bla bla bla.");
-                curriculum.setGeneralObjectivesEn("General objectives blur ble ble blur.");
-                curriculum.setOperacionalObjectives("Objectivos Operacionais bla bla bla bla bla.");
-                curriculum.setOperacionalObjectivesEn("Operational objectives blur ble ble blur.");
-                curriculum.setProgram("Programa bla bla bla bla bla.");
-                curriculum.setProgramEn("Program blur ble ble blur.");
-                curriculum.setLastModificationDateDateTime(new DateTime());
-                final CompetenceCourse competenceCourse =
-                        new CompetenceCourse(curricularCourse.getCode(), curricularCourse.getName(), null);
-                curricularCourse.setCompetenceCourse(competenceCourse);
-            }
-        }
-    }
+//    private static void createPreBolonhaCurricularCourses(final DegreeCurricularPlan degreeCurricularPlan, int dcpCounter,
+//            final ExecutionYear executionYear, final Branch branch) {
+//        for (final CurricularSemester curricularSemester : Bennu.getInstance().getCurricularSemestersSet()) {
+//            final CurricularYear curricularYear = curricularSemester.getCurricularYear();
+//            for (int i = 1; i < 6; i++) {
+//                final String x = "" + dcpCounter + i + curricularYear.getYear() + curricularSemester.getSemester();
+//                final CurricularCourse curricularCourse =
+//                        degreeCurricularPlan.createCurricularCourse("Germinacao do Conhecimento" + x, "C" + x, "D" + x,
+//                                Boolean.TRUE, CurricularStage.OLD);
+//                curricularCourse.setNameEn("KnowledgeGermination" + x);
+//                curricularCourse.setType(CurricularCourseType.NORMAL_COURSE);
+//                curricularCourse.setTheoreticalHours(Double.valueOf(3d));
+//                curricularCourse.setPraticalHours(Double.valueOf(2d));
+//                curricularCourse.setMinimumValueForAcumulatedEnrollments(Integer.valueOf(1));
+//                curricularCourse.setMaximumValueForAcumulatedEnrollments(Integer.valueOf(2));
+//                curricularCourse.setWeigth(Double.valueOf(6));
+//                new CurricularCourseScope(branch, curricularCourse, curricularSemester, executionYear.getBeginDateYearMonthDay()
+//                        .toDateMidnight().toCalendar(null), null, null);
+//                final Curriculum curriculum = new Curriculum();
+//                curriculum.setCurricularCourse(curricularCourse);
+//                curriculum.setGeneralObjectives("Objectivos gerais bla bla bla bla bla.");
+//                curriculum.setGeneralObjectivesEn("General objectives blur ble ble blur.");
+//                curriculum.setOperacionalObjectives("Objectivos Operacionais bla bla bla bla bla.");
+//                curriculum.setOperacionalObjectivesEn("Operational objectives blur ble ble blur.");
+//                curriculum.setProgram("Programa bla bla bla bla bla.");
+//                curriculum.setProgramEn("Program blur ble ble blur.");
+//                curriculum.setLastModificationDateDateTime(new DateTime());
+//                final CompetenceCourse competenceCourse =
+//                        new CompetenceCourse(curricularCourse.getCode(), curricularCourse.getName(), null);
+//                curricularCourse.setCompetenceCourse(competenceCourse);
+//            }
+//        }
+//    }
 
     private static void createProfessorship(final ExecutionCourse executionCourse, final Boolean isResponsibleFor) {
         final int n = Bennu.getInstance().getTeachersSet().size();

@@ -466,7 +466,7 @@ public class JerseyServices {
                 JsonObject phdInfo = new JsonObject();
                 phdInfo.addProperty("id", phdProcess.getExternalId());
                 phdInfo.addProperty("author", phdProcess.getPerson().getUsername());
-                phdInfo.addProperty("title", phdProcess.getThesisTitle());
+                phdInfo.addProperty("title", phdProcess.getThesisTitle().getContent());
 
                 JsonArray schools = new JsonArray();
                 switch (phdProcess.getCollaborationType()) {
